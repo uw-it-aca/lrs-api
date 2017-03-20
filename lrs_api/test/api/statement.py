@@ -54,3 +54,10 @@ class TestStatementAPI(TestCase):
                           "http://adlnet.gov/expapi/verbs/experienced")
         self.assertEquals(s0.statement, statement)
         self.assertEquals(s0.tenant.id, 1)
+
+    def test_bad_post(self):
+        url = reverse("lrs_api_statement")
+        client = Client()
+
+        response = client.post(url, "", content_type="application/json")
+        self.assertEquals(response.status_code, 400)

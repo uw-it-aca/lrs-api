@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from lrs_api.util import require_app_write, require_app_read
 from lrs_api.models import Tenant, Statement
+from lrs_api.exceptions import InvalidXAPIException
 
 
 class REST(object):
@@ -23,7 +24,7 @@ class ProcessStatement(REST):
         tenant = Tenant.objects.get(pk=1)
 
         try:
-            created = Statement.from_json(tenant, request.body)
+            created = Statement.from_json(tenant, request.body.decode("utf-8"))
         except InvalidXAPIException:
             return HttpResponse(status=400)
         return HttpResponse(status=201)
