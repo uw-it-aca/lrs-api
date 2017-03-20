@@ -10,7 +10,7 @@ before_script:
 - cp travis-ci/manage.py manage.py
 - python manage.py migrate
 script:
-- pep8 lrs_api
+- pep8 lrs_api --exclude=lrs_api/migrations
 - python -m compileall lrs_api/
 - coverage run --source=lrs_api/ --omit=lrs_api/migrations/* manage.py test lrs_api
 after_script:
