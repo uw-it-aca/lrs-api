@@ -1,0 +1,17 @@
+sudo: false
+language: python
+python:
+- '2.7'
+- '3.5'
+before_script:
+- pip install -e .
+- pip install pep8
+- pip install python-coveralls
+- cp travis-ci/manage.py manage.py
+- python manage.py migrate
+script:
+- pep8 lrs_api
+- python -m compileall lrs_api/
+- coverage run --source=lrs_api/ --omit=lrs_api/migrations/* manage.py test lrs_api
+after_script:
+- coveralls
