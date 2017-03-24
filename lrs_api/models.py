@@ -78,7 +78,7 @@ class Statement(models.Model):
             new_statement.id = statement_id
 
         if "action" not in data:
-            raise MissingCaliperAttributeException("action is required")
+            raise MissingCaliperFieldException("action is required")
 
         if "eventTime" in data:
             try:

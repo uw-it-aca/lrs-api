@@ -30,6 +30,7 @@ class ProcessStatement(REST):
             return HttpResponse(status=400)
         return HttpResponse(status=201)
 
+    @require_app_read
     def get(self, request):
         tenant = Tenant.objects.get(pk=1)
         has_valid_query = False

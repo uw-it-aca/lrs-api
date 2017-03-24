@@ -1,13 +1,16 @@
-from unittest2 import TestCase
 from lrs_api.models import Statement, Tenant
 import uuid
+from lrs_api.test import LRSTest
 from lrs_api.exceptions import (InvalidStatementJsonException,
                                 MissingXAPIFieldException,
                                 MissingXAPIAttributeException,
+                                MissingCaliperFieldException,
+                                InvalidContextException,
+                                InvalidStatementDateTimeException,
                                 StatementExistsException)
 
 
-class TestStatementModel(TestCase):
+class TestStatementModel(LRSTest):
     def setUp(self):
         self.tenant = Tenant.objects.get(pk=1)
 
@@ -35,3 +38,17 @@ class TestStatementModel(TestCase):
 
         with self.assertRaises(MissingXAPIFieldException):
             Statement.from_json(self.tenant, '{"verb":{"missing":"an id" }}')
+
+    def test_bad_caliper_id(self):
+        with self.assertRaises(InvalidContextException):
+            Statement.from_json(self.tenant, '{"@context": "d/caliper/v1p1"}')
+
+    def test_bad_caliper_eventtime(self):
+        statement = self.load_statement('caliper', 'errors', 'bad_date.json')
+        with self.assertRaises(InvalidStatementDateTimeException):
+            Statement.from_json(self.tenant, statement)
+
+    def test_bad_caliper_action(self):
+        statement = self.load_statement('caliper', 'errors', 'no_action.json')
+        with self.assertRaises(MissingCaliperFieldException):
+            Statement.from_json(self.tenant, statement)
