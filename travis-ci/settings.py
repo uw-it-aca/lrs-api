@@ -52,7 +52,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lrs_api',
+    'lrs_api.apps.LrsApiConfig',
 )
 
 MIDDLEWARE_CLASSES = (
