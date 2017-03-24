@@ -1,17 +1,15 @@
-from unittest2 import TestCase
 from django.test import Client
 from django.urls import reverse
 from lrs_api.models import Statement
+from lrs_api.test import LRSTest
+import json
 
 
-class TestStatementAPI(TestCase):
+class TestStatementAPI(LRSTest):
     def test_methods(self):
         url = reverse("lrs_api_statement")
 
         client = Client()
-        response = client.get(url)
-        self.assertEquals(response.status_code, 405)
-
         response = client.patch(url)
         self.assertEquals(response.status_code, 405)
 
@@ -61,3 +59,66 @@ class TestStatementAPI(TestCase):
 
         response = client.post(url, "", content_type="application/json")
         self.assertEquals(response.status_code, 400)
+
+    def test_caliper_post(self):
+
+        statement = self.load_statement('caliper', 'quizSubmitted.json')
+
+        url = reverse("lrs_api_statement")
+
+        client = Client()
+
+        Statement.objects.all().delete()
+        response = client.post(url, statement, content_type="application/json")
+
+        self.assertEquals(response.status_code, 201)
+
+        all_statements = Statement.objects.all()
+        self.assertEquals(len(all_statements), 1)
+        s0 = all_statements[0]
+
+    def test_caliper_gets(self):
+        Statement.objects.all().delete()
+        url = reverse("lrs_api_statement")
+        client = Client()
+
+        for name in ['quizSubmitted.json', 'attachmentCreated.json']:
+            statement = self.load_statement('caliper', name)
+            response = client.post(url, statement,
+                                   content_type="application/json")
+
+        response = client.get(url)
+        self.assertEquals(response.status_code, 400)
+
+        response = client.get(url, {"since": "2016-10-11T00:00:28.000Z"})
+        self.assertEquals(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 2)
+
+        response = client.get(url, {"since": "2016-10-11T00:01:28.000Z"})
+        self.assertEquals(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 1)
+
+        response = client.get(url, {"since": "2016-10-11T00:00:28.000Z",
+                                    "limit": 1})
+        self.assertEquals(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 1)
+
+        uuid = '2c3d1836-c610-4a00-a81a-ee2add863e02'
+        response = client.get(url, {'uuid': uuid})
+        self.assertEquals(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 1)
+
+        bad_uuid = '2c3d1836-c610-4a00-a81a-ee2add863e00'
+        response = client.get(url, {'uuid': bad_uuid})
+        self.assertEquals(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 0)

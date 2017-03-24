@@ -1,0 +1,69 @@
+{
+  "@context": "http://purl.imsglobal.org/ctx/caliper/v1p1",
+  "uuid": "ad38dfb7-030b-479e-883e-3ef2dc3e3969",
+  "type": "AssessmentEvent",
+  "actor": {
+    "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+    "type": "Person",
+    "extensions": [
+      {
+        "user_login": "student@instructure.com",
+        "root_account_id": "school-1",
+        "root_account_lti_guid": "794d72b707af6ea82cfe3d5d473f16888a8366c7.canvas.kr"
+      }
+    ]
+  },
+  "action": "Submitted",
+  "object": {
+    "id": "http://caliper.canvaslms.com/live-events/courses/course-1/quizes/quiz-1/submissions/submission-1",
+    "type": "Attempt",
+    "assignee": {
+      "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+      "type": "Person"
+    },
+    "assignable": {
+      "id": "http://caliper.canvaslms.com/live-events/courses/course-1/quizes/quiz-1",
+      "type": "Assessment"
+    }
+  },
+  "eventTime": "2016-10-11T16:06:37.000Z",
+  "edApp": {
+    "id": "http://caliper.canvaslms.com/live-events",
+    "type": "SoftwareApplication"
+  },
+  "group": {
+    "id": "http://caliper.canvaslms.com/live-events/courses/course-1",
+    "type": "CourseOffering",
+    "extensions": [
+      {
+        "context_type": "Course"
+      }
+    ]
+  },
+  "membership": {
+    "id": "http://caliper.canvaslms.com/live-events/courses/course-1/Learner/student-1",
+    "type": "Membership",
+    "member": {
+      "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+      "type": "Person"
+    },
+    "organization": {
+      "id": "http://caliper.canvaslms.com/live-events/courses/course-1",
+      "type": "CourseOffering"
+    },
+    "roles": [
+      "Learner"
+    ]
+  },
+  "session": {
+    "id": "http://caliper.canvaslms.com/live-events/sessions/91cc7940fdfe4882bf5272644589c859",
+    "type": "Session"
+  },
+  "extensions": [
+    {
+      "hostname": "canvas.docker",
+      "request_id": "2a9a0e9f-3ddd-4c53-8802-7c9ec5043004",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
+    }
+  ]
+}

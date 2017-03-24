@@ -1,0 +1,69 @@
+  {
+    "@context": "http://purl.imsglobal.org/ctx/caliper/v1p1",
+    "uuid": "2c3d1836-c610-4a00-a81a-ee2add863e02",
+    "type": "Event",
+    "actor": {
+      "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+      "type": "Person",
+      "extensions": [
+        {
+          "user_login": "student@instructure.com",
+          "root_account_id": "school-1",
+          "root_account_lti_guid": "794d72b707af6ea82cfe3d5d473f16888a8366c7.canvas.kr"
+        }
+      ]
+    },
+    "action": "Created",
+    "object": {
+      "id": "http://caliper.canvaslms.com/live-events/attachments/attachment-1",
+      "type": "Document",
+      "name": "XapiCaliperDiscovery- CaliperOverview.pdf",
+      "dateCreated": "2016-10-11T00:00:28.000Z",
+      "extensions": [
+        {
+          "context_id": "student-1",
+          "context_type": "User",
+          "filename": "XapiCaliperDiscovery-_CaliperOverview.pdf",
+          "folder_id": "folder-3"
+        }
+      ],
+      "mediaType": "application/pdf"
+    },
+    "eventTime": "2016-10-11T00:00:28.000Z",
+    "edApp": {
+      "id": "http://caliper.canvaslms.com/live-events",
+      "type": "SoftwareApplication"
+    },
+    "group": {
+      "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+      "type": "Person",
+      "extensions": [
+        {
+          "context_type": "User"
+        }
+      ]
+    },
+    "membership": {
+      "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+      "type": "Membership",
+      "member": {
+        "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+        "type": "Person"
+      },
+      "organization": {
+        "id": "http://caliper.canvaslms.com/live-events/users/student-1",
+        "type": "Person"
+      }
+    },
+    "session": {
+      "id": "http://caliper.canvaslms.com/live-events/sessions/91cc7940fdfe4882bf5272644589c859",
+      "type": "Session"
+    },
+    "extensions": [
+      {
+        "hostname": "canvas.docker",
+        "request_id": "3a70c9a6-81e5-4a1c-bfa6-fd3f99780273",
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
+      }
+    ]
+  }

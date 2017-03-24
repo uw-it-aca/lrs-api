@@ -1,7 +1,7 @@
 from unittest2 import TestCase
 from lrs_api.models import Statement, Tenant
 import uuid
-from lrs_api.exceptions import (InvalidXAPIJsonException,
+from lrs_api.exceptions import (InvalidStatementJsonException,
                                 MissingXAPIFieldException,
                                 MissingXAPIAttributeException,
                                 StatementExistsException)
@@ -12,11 +12,11 @@ class TestStatementModel(TestCase):
         self.tenant = Tenant.objects.get(pk=1)
 
     def test_empty_json(self):
-        with self.assertRaises(InvalidXAPIJsonException):
+        with self.assertRaises(InvalidStatementJsonException):
             Statement.from_json(self.tenant, "")
 
     def test_invalid_json(self):
-        with self.assertRaises(InvalidXAPIJsonException):
+        with self.assertRaises(InvalidStatementJsonException):
             Statement.from_json(self.tenant, "{ 'ok")
 
     def test_uuid_block(self):

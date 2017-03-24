@@ -25,6 +25,7 @@ setup(
     install_requires=[
         'Django==1.10.6',
         'unittest2',
+        'python-dateutil',
     ],
     license='Apache License, Version 2.0',
     description=('An API supporting a Learning Record System'),
