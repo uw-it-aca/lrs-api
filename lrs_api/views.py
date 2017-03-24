@@ -40,12 +40,12 @@ class ProcessStatement(REST):
                 date = parser.parse(request.GET['since'])
             except ValueError:
                 return HttpResponse(status=400,
-                                    body="Invalid format for since")
+                                    content="Invalid format for since")
 
             values = values.filter(timestamp__gte=date)
             has_valid_query = True
 
-        if "util" in request.GET:
+        if "until" in request.GET:
             try:
                 date = parser.parse(request.GET['until'])
             except ValueError:
