@@ -68,7 +68,7 @@ class ProcessStatement(REST):
                                 content="Some filter params are required")
 
         if "limit" in request.GET:
-            values = values[:request.GET["limit"]]
+            values = values[:int(request.GET["limit"])]
 
         statement_jsons = map(lambda x: x.statement, values)
 

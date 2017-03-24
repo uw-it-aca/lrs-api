@@ -2,7 +2,7 @@ from django.test import Client
 from django.urls import reverse
 from lrs_api.models import Statement
 from lrs_api.test import LRSTest
-import json
+from lrs_api.test import decode_json as json
 
 
 class TestStatementAPI(LRSTest):
