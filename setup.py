@@ -26,6 +26,7 @@ setup(
         'Django==1.10.6',
         'unittest2',
         'python-dateutil',
+        'django-oauth-toolkit',
     ],
     license='Apache License, Version 2.0',
     description=('An API supporting a Learning Record System'),

@@ -1,26 +1,18 @@
 from django.http import HttpResponse
+from django.views.generic import View
 from dateutil import parser
-from lrs_api.util import require_app_write, require_app_read
+from oauth2_provider.views.generic import ProtectedResourceView
+from oauth2_provider.views.mixins import (ProtectedResourceMixin,
+                                          ReadWriteScopedResourceMixin)
 from lrs_api.models import Tenant, Statement
 from lrs_api.exceptions import InvalidStatementException
 
 
-class REST(object):
-    def run(self, request, *args, **named_args):
-        request_method = request.META['REQUEST_METHOD'].lower()
-        methods = ['get', 'post', 'put']
-        for method in methods:
-            if method == request_method:
-                if hasattr(self, method):
-                    func = getattr(self, method)
-                    return func(request, *args, **named_args)
-
-        return HttpResponse(status=405)
+class REST(ProtectedResourceView):
+    pass
 
 
-class ProcessStatement(REST):
-    # Post and put statements
-    @require_app_write
+class ProcessStatement(ReadWriteScopedResourceMixin, ProtectedResourceView):
     def post(self, request):
         tenant = Tenant.objects.get(pk=1)
 
@@ -30,7 +22,6 @@ class ProcessStatement(REST):
             return HttpResponse(status=400)
         return HttpResponse(status=201)
 
-    @require_app_read
     def get(self, request):
         tenant = Tenant.objects.get(pk=1)
         has_valid_query = False

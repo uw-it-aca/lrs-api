@@ -11,30 +11,34 @@ class TestStatementAPI(LRSTest):
         url = reverse("lrs_api_statement")
         client = Client()
 
+        headers = self._get_write_header()
+        headers['content_type'] = 'application/json'
         for name in ['quizSubmitted.json', 'attachmentCreated.json']:
             statement = self.load_statement('caliper', name)
-            response = client.post(url, statement,
-                                   content_type="application/json")
+            response = client.post(url, statement, **headers)
 
     def test_methods(self):
         url = reverse("lrs_api_statement")
 
         client = Client()
-        response = client.patch(url)
+        headers = self._get_write_header()
+        response = client.patch(url, **headers)
         self.assertEquals(response.status_code, 405)
 
-        response = client.delete(url)
+        response = client.delete(url, **headers)
         self.assertEquals(response.status_code, 405)
 
     def test_post(self):
         url = reverse("lrs_api_statement")
 
         client = Client()
+        headers = self._get_write_header()
 
         statement = self.load_statement('xapi', 'hang_gliding.json')
 
         Statement.objects.all().delete()
-        response = client.post(url, statement, content_type="application/json")
+        response = client.post(url, statement, content_type="application/json",
+                               **headers)
 
         self.assertEquals(response.status_code, 201)
 
@@ -51,7 +55,9 @@ class TestStatementAPI(LRSTest):
         url = reverse("lrs_api_statement")
         client = Client()
 
-        response = client.post(url, "", content_type="application/json")
+        headers = self._get_write_header()
+        response = client.post(url, "", content_type="application/json",
+                               **headers)
         self.assertEquals(response.status_code, 400)
 
     def test_caliper_post(self):
@@ -61,9 +67,11 @@ class TestStatementAPI(LRSTest):
         url = reverse("lrs_api_statement")
 
         client = Client()
+        headers = self._get_write_header()
 
         Statement.objects.all().delete()
-        response = client.post(url, statement, content_type="application/json")
+        response = client.post(url, statement, content_type="application/json",
+                               **headers)
 
         self.assertEquals(response.status_code, 201)
 
@@ -71,23 +79,41 @@ class TestStatementAPI(LRSTest):
         self.assertEquals(len(all_statements), 1)
         s0 = all_statements[0]
 
+    def test_caliper_post_wrong_scope(self):
+        statement = self.load_statement('caliper', 'quizSubmitted.json')
+
+        url = reverse("lrs_api_statement")
+
+        client = Client()
+        headers = self._get_read_header()
+
+        Statement.objects.all().delete()
+        response = client.post(url, statement, content_type="application/json",
+                               **headers)
+
+        self.assertEquals(response.status_code, 403)
+
+        all_statements = Statement.objects.all()
+        self.assertEquals(len(all_statements), 0)
+
     def test_caliper_gets(self):
         self._load_useful()
         url = reverse("lrs_api_statement")
         client = Client()
+        headers = self._get_read_header()
 
-        response = client.get(url)
+        response = client.get(url, **headers)
         self.assertEquals(response.status_code, 400)
 
         uuid = '2c3d1836-c610-4a00-a81a-ee2add863e02'
-        response = client.get(url, {'uuid': uuid})
+        response = client.get(url, {'uuid': uuid}, **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
         self.assertEquals(len(data), 1)
 
         bad_uuid = '2c3d1836-c610-4a00-a81a-ee2add863e00'
-        response = client.get(url, {'uuid': bad_uuid})
+        response = client.get(url, {'uuid': bad_uuid}, **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
@@ -97,20 +123,24 @@ class TestStatementAPI(LRSTest):
         self._load_useful()
         url = reverse("lrs_api_statement")
         client = Client()
-        response = client.get(url, {"since": "2016-10-11T00:00:28.000Z"})
+        headers = self._get_read_header()
+        response = client.get(url, {"since": "2016-10-11T00:00:28.000Z"},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
         self.assertEquals(len(data), 2)
 
-        response = client.get(url, {"since": "2016-10-11T00:01:28.000Z"})
+        response = client.get(url, {"since": "2016-10-11T00:01:28.000Z"},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
         self.assertEquals(len(data), 1)
 
         response = client.get(url, {"since": "2016-10-11T00:00:28.000Z",
-                                    "limit": 1})
+                                    "limit": 1},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
@@ -120,20 +150,25 @@ class TestStatementAPI(LRSTest):
         self._load_useful()
         url = reverse("lrs_api_statement")
         client = Client()
-        response = client.get(url, {"until": "2016-11-11T00:00:28.000Z"})
+
+        headers = self._get_read_header()
+        response = client.get(url, {"until": "2016-11-11T00:00:28.000Z"},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
         self.assertEquals(len(data), 2)
 
-        response = client.get(url, {"until": "2015-10-11T00:01:28.000Z"})
+        response = client.get(url, {"until": "2015-10-11T00:01:28.000Z"},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
         self.assertEquals(len(data), 0)
 
         response = client.get(url, {"until": "2016-10-11T00:10:28.000Z",
-                                    "limit": 1})
+                                    "limit": 1},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
@@ -143,8 +178,10 @@ class TestStatementAPI(LRSTest):
         self._load_useful()
         url = reverse("lrs_api_statement")
         client = Client()
+        headers = self._get_read_header()
         response = client.get(url, {"until": "2016-10-11T00:00:38.000Z",
-                                    "since": "2016-10-11T00:00:08.000Z"})
+                                    "since": "2016-10-11T00:00:08.000Z"},
+                              **headers)
         self.assertEquals(response.status_code, 200)
 
         data = json.loads(response.content)
@@ -157,18 +194,20 @@ class TestStatementAPI(LRSTest):
         self._load_useful()
         url = reverse("lrs_api_statement")
         client = Client()
-        response = client.get(url, {"until": "2016-1a"})
+        headers = self._get_read_header()
+        response = client.get(url, {"until": "2016-1a"}, **headers)
         self.assertEquals(response.status_code, 400)
 
-        response = client.get(url, {"since": "2016-1a"})
+        response = client.get(url, {"since": "2016-1a"}, **headers)
         self.assertEquals(response.status_code, 400)
 
     def test_by_verb(self):
         self._load_useful()
         url = reverse("lrs_api_statement")
         client = Client()
+        headers = self._get_read_header()
 
-        response = client.get(url, {"verb": "Submitted"})
+        response = client.get(url, {"verb": "Submitted"}, **headers)
         data = json.loads(response.content)
         self.assertEquals(len(data), 1)
 
