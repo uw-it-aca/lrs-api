@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lrs_api.apps.LrsApiConfig',
+    'oauth2_provider',
 )
 
 MIDDLEWARE_CLASSES = (
