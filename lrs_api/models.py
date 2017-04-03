@@ -4,6 +4,7 @@ from django.utils import timezone
 from dateutil import parser
 import uuid
 import json
+from oauth2_provider.models import Application
 from lrs_api.exceptions import (InvalidStatementJsonException,
                                 MissingCaliperFieldException,
                                 MissingXAPIFieldException,
@@ -106,3 +107,7 @@ class Statement(models.Model):
 
         else:
             return cls.from_xapi(tenant, data, json_string)
+
+class OAuthClientWithScopes(models.Model):
+    granted_scopes = models.CharField(max_length=200)
+    app_pk = models.IntegerField(db_index=True)

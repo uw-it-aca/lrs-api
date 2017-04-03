@@ -1,11 +1,13 @@
 from django.http import HttpResponse
 from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
 from dateutil import parser
 from oauth2_provider.views.generic import ProtectedResourceView
 from oauth2_provider.views.mixins import (ProtectedResourceMixin,
                                           ReadWriteScopedResourceMixin)
-from lrs_api.models import Tenant, Statement
+from lrs_api.models import Tenant, Statement, OAuthClientWithScopes
 from lrs_api.exceptions import InvalidStatementException
+from oauth2_provider.oauth2_validators import OAuth2Validator
 
 
 class REST(ProtectedResourceView):
@@ -14,6 +16,26 @@ class REST(ProtectedResourceView):
 
 class ProcessStatement(ReadWriteScopedResourceMixin, ProtectedResourceView):
     def post(self, request):
+        # Ugh, until this is resolved:
+        # https://github.com/evonove/django-oauth-toolkit/pull/395
+        if request.META.get('HTTP_AUTHORIZATION', '').startswith('Bearer'):
+            token = request.META.get('HTTP_AUTHORIZATION', '')[7:]
+            if not OAuth2Validator().validate_bearer_token(token=token,
+                                                           scopes=[],
+                                                           request=request):
+                raise Exception("Invalid token - no user")
+
+            if not request.client:
+                raise Exception("Invalid token - no client app")
+
+            try:
+                wrapped = OAuthClientWithScopes.objects.get(app_pk=request.client.pk)
+                scopes = wrapped.granted_scopes.split(' ')
+                if "add_records" not in scopes:
+                    return HttpResponse("No write access for client", status=403)
+            except OAuthClientWithScopes.DoesNotExist:
+                return HttpResponse("No write access for client", status=403)
+
         tenant = Tenant.objects.get(pk=1)
 
         try:
