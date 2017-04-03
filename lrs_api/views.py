@@ -29,10 +29,12 @@ class ProcessStatement(ReadWriteScopedResourceMixin, ProtectedResourceView):
                 raise Exception("Invalid token - no client app")
 
             try:
-                wrapped = OAuthClientWithScopes.objects.get(app_pk=request.client.pk)
+                client_pk = request.client.pk
+                wrapped = OAuthClientWithScopes.objects.get(app_pk=client_pk)
                 scopes = wrapped.granted_scopes.split(' ')
                 if "add_records" not in scopes:
-                    return HttpResponse("No write access for client", status=403)
+                    return HttpResponse("No write access for client",
+                                        status=403)
             except OAuthClientWithScopes.DoesNotExist:
                 return HttpResponse("No write access for client", status=403)
 

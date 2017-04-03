@@ -11,19 +11,14 @@ class Command(BaseCommand):
                             help='Lets the client add events',
                             action='store_true')
 
-
-
     def handle(self, *args, **options):
-
-        print (options)
-        app = Application.objects.create(skip_authorization=True,
-                                         client_type='confidential',
-                                         authorization_grant_type='client-credentials',
-                                         name=options['name'])
+        ao = Application.objects
+        app = ao.create(skip_authorization=True,
+                        client_type='confidential',
+                        authorization_grant_type='client-credentials',
+                        name=options['name'])
 
         if options['write_access']:
-            wrapped = OAuthClientWithScopes.objects.create(app_pk = app.pk, granted_scopes='add_records')
-        print("ID:%s SECRET:%s" % (app.client_id,
-                                   app.client_secret))
-
-
+            o = OAuthClientWithScopes.objects
+            wrapped = o.create(app_pk=app.pk, granted_scopes='add_records')
+        print("ID:%s SECRET:%s" % (app.client_id, app.client_secret))
